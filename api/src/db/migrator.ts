@@ -1,0 +1,75 @@
+import express, { Request, Response } from "express"
+import { join } from "path"
+
+import { NODE_ENV } from "@/config"
+import logger from "@/utils/logger"
+import dbMigrationClient from "@/db/db-migration-client"
+
+export class Migrator {
+  readonly migrationRouter
+
+  constructor() {
+    if (NODE_ENV == "production") {
+      logger.warn("Running migration controller in production!!!")
+    }
+    this.migrationRouter = express.Router()
+
+    this.migrationRouter.get("/", async (_req: Request, res: Response) => {
+      res.json({ data: await this.listMigrations() })
+    })
+
+    this.migrationRouter.get("/up", async (_req: Request, res: Response) => {
+      try {
+        await this.migrateUp()
+      } catch (err) {
+        logger.error(err)
+      }
+      res.json({ data: await migrator.listMigrations() })
+    })
+
+    this.migrationRouter.get("/down", async (_req: Request, res: Response) => {
+      try {
+        await this.migrateDown()
+      } catch (err) {
+        logger.error(err)
+      }
+      res.json({ data: await this.listMigrations() })
+    })
+
+    this.migrationRouter.get("/seed", async (_req: Request, res: Response) => {
+      try {
+        await this.seedUp()
+      } catch (err) {
+        logger.error(err)
+      }
+      res.json({ data: "Seeding" })
+    })
+  }
+
+  listMigrations() {
+    return dbMigrationClient.migrate.list({ directory: join(__dirname, "migrations") })
+  }
+
+  async migrateUp() {
+    logger.warn("-------- MIGRATE UP ---------")
+    return dbMigrationClient.migrate.up({ directory: join(__dirname, "migrations") })
+  }
+
+  async migrateDown() {
+    logger.warn("-------- MIGRATE DOWN ---------")
+    return dbMigrationClient.migrate.down({ directory: join(__dirname, "migrations") })
+  }
+
+  async migrateLatest() {
+    logger.warn("-------- MIGRATE LATEST ---------")
+    return dbMigrationClient.migrate.latest({ directory: join(__dirname, "migrations") })
+  }
+
+  async seedUp() {
+    logger.warn("-------- SEED UP ---------")
+    return dbMigrationClient.seed.run({ directory: join(__dirname, "seeds", NODE_ENV) })
+  }
+}
+const migrator = new Migrator()
+
+export default migrator

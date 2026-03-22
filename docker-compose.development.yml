@@ -1,0 +1,45 @@
+x-default-environment: &default-environment
+  TZ: "UTC"
+  NODE_ENV: development
+  DB_HOST: db
+  DB_USERNAME: postgres
+  DB_DATABASE: vaultmc_development
+  DB_PASSWORD: &default-db-password itsallgood
+  DB_PORT: &default-db-port 5432
+  DB_TRUST_SERVER_CERTIFICATE: "true" # not recommended for production
+  RELEASE_TAG: "${RELEASE_TAG:-development}"
+  GIT_COMMIT_HASH: "${GIT_COMMIT_HASH:-not-set}"
+
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: development.Dockerfile
+    env_file:
+      - ./api/.env.development
+    environment:
+      <<: *default-environment
+    tty: true 
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/usr/src/api
+      - ./.gitignore:/usr/src/.gitignore
+      - ./.prettierrc.yaml:/usr/src/.prettierrc.yaml
+    depends_on:
+      - db
+
+  db:
+    image: postgres:18.3
+    environment:
+      <<: *default-environment
+      POSTGRES_USER: *default-db-user
+      POSTGRES_PASSWORD: *default-db-password
+      POSTGRES_DB: *default-db-name
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

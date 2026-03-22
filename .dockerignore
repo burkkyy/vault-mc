@@ -1,0 +1,14 @@
+api/node_modules
+api/dist
+dist
+npm-debug.log
+node_modules
+docs
+
+/now.*
+/*.now.*
+**/now.*
+
+/note.*
+/*.note.*
+**/note.*

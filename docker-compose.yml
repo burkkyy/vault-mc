@@ -1,0 +1,31 @@
+services:
+  app:
+    # replace `build` line with `image` line, if you want to pull a build generated via github workflow
+    # Note you must use the appropriate build tag
+    # image: ghcr.io/icefoganalytics/dune/thrive:v2024.01.8.1
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    ports:
+      - "${HOST_PORT:-3000}:${HOST_PORT:-3000}"
+    volumes:
+      - ./.env:/home/node/app/.env.production
+    depends_on:
+      - db
+
+  db:
+    image: postgres:18.3
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "itsallgood"
+      POSTGRES_DB: "vaultmc_production"
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
