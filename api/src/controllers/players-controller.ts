@@ -33,26 +33,6 @@ export class PlayersController extends BaseController<Player> {
     }
   }
 
-  async create() {
-    try {
-      const player = await this.buildPlayer()
-
-      const policy = this.buildPolicy(player)
-      if (!policy.create()) {
-        return this.response
-          .status(403)
-          .json({ message: "You are not authorized to create this player." })
-      }
-
-      const permittedAttributes = policy.permitAttributesForCreate(this.request.body)
-      const newPlayer = await CreateService.perform(permittedAttributes)
-      return this.response.status(201).json({ player: newPlayer })
-    } catch (error) {
-      logger.error(`Player creation failed: ${error}`, { error })
-      return this.response.status(422).json({ message: "User creation failed" })
-    }
-  }
-
   async show() {
     try {
       const player = await this.loadPlayer()
@@ -74,6 +54,26 @@ export class PlayersController extends BaseController<Player> {
     } catch (error) {
       logger.error(`Error fetching User: ${error}`, { error })
       return this.response.status(422).json({ message: "Error fetching player" })
+    }
+  }
+
+  async create() {
+    try {
+      const player = await this.buildPlayer()
+
+      const policy = this.buildPolicy(player)
+      if (!policy.create()) {
+        return this.response
+          .status(403)
+          .json({ message: "You are not authorized to create this player." })
+      }
+
+      const permittedAttributes = policy.permitAttributesForCreate(this.request.body)
+      const newPlayer = await CreateService.perform(permittedAttributes)
+      return this.response.status(201).json({ player: newPlayer })
+    } catch (error) {
+      logger.error(`Player creation failed: ${error}`, { error })
+      return this.response.status(422).json({ message: "User creation failed" })
     }
   }
 
