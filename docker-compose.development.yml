@@ -30,6 +30,28 @@ services:
     depends_on:
       - db
 
+  test_api:
+    build:
+      context: ./api
+      dockerfile: development.Dockerfile
+    command: /bin/true
+    env_file:
+      - ./api/.env.development
+    environment:
+      <<: *default-environment
+      NODE_ENV: test
+      DB_DATABASE: vaultmc_test
+      DEFAULT_LOG_LEVEL: "info"
+      DB_HEALTH_CHECK_START_PERIOD_SECONDS: 0
+    tty: true
+    volumes:
+      - ./api:/usr/src/api
+      - test_api_vitest_cache:/usr/src/api/tmp/.vitest-cache
+    depends_on:
+      - db
+    profiles:
+      - test
+
   db:
     image: postgres:18.3
     environment:
@@ -44,3 +66,4 @@ services:
 
 volumes:
   db_data:
+  test_api_vitest_cache:
