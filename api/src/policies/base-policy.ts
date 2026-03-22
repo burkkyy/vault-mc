@@ -1,6 +1,6 @@
 import { ModelStatic, Model, Attributes, FindOptions, ScopeOptions, literal } from "@sequelize/core"
 
-import { User } from "@/models"
+import { Player } from "@/models"
 import { Path, deepPick } from "@/utils/deep-pick"
 
 export type Actions = "show" | "create" | "update" | "destroy"
@@ -11,11 +11,11 @@ export const ALL_RECORDS_SCOPE = {}
  * See PolicyFactory below for policy with scope helpers
  */
 export class BasePolicy<M extends Model> {
-  protected user: User
+  protected player: Player
   protected record: M
 
-  constructor(user: User, record: M) {
-    this.user = user
+  constructor(player: Player, record: M) {
+    this.player = player
     this.record = record
   }
 
@@ -36,7 +36,7 @@ export class BasePolicy<M extends Model> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static policyScope<M extends Model>(user: User): FindOptions<Attributes<M>> {
+  static policyScope<M extends Model>(player: Player): FindOptions<Attributes<M>> {
     throw new Error("Derived classes must implement policyScope method")
   }
 
@@ -98,9 +98,9 @@ export const POLICY_SCOPE_NAME = "policyScope"
 
 export function PolicyFactory<M extends Model, T extends Model = M>(modelClass: ModelStatic<M>) {
   const policyClass = class Policy extends BasePolicy<T> {
-    static applyScope(scopes: BaseScopeOptions[], user: User): ModelStatic<M> {
+    static applyScope(scopes: BaseScopeOptions[], player: Player): ModelStatic<M> {
       this.ensurePolicyScope()
-      return modelClass.scope([...scopes, { method: [POLICY_SCOPE_NAME, user] }])
+      return modelClass.scope([...scopes, { method: [POLICY_SCOPE_NAME, player] }])
     }
 
     /**

@@ -1,18 +1,14 @@
 import db from "@/db/db-client"
 
 // Models
-import { User } from "@/models/user"
-import { Company } from "@/models/company"
-import { Shareholder } from "@/models/shareholder"
+import { Player } from "@/models/player"
 
-db.addModels([User, Company, Shareholder])
+db.addModels([Player])
 
 // Lazy load scopes
-User.establishScopes()
-Company.establishScopes()
-Shareholder.establishScopes()
+Player.establishScopes()
 
-export { User, Company, Shareholder }
+export { Player }
 
 // Special db instance will all models loaded
 export default db

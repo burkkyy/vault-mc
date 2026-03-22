@@ -1,0 +1,14 @@
+{
+  "extends": "./../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./../",
+    "baseUrl": "./../",
+    "paths": {
+      "@/tests/*": ["./tests/*"],
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["../node_modules/@types", "../@types", "./@types"],
+    "types": ["node", "../vitest/globals"]
+  },
+  "include": ["../src/**/*", "../tests/**/*", ""]
+}

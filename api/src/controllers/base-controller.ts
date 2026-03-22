@@ -2,13 +2,13 @@ import { NextFunction, Request, Response } from "express"
 import { Attributes, Model, Order, WhereOptions } from "@sequelize/core"
 import { dropRight, isEmpty, isNil, uniqBy } from "lodash"
 
-import User from "@/models/user"
+import Player from "@/models/player"
 import { type BaseScopeOptions } from "@/policies"
 
 export type Actions = "index" | "show" | "new" | "edit" | "create" | "update" | "destroy"
 
 type ControllerRequest = Request & {
-  currentUser: User
+  currentPlayer: Player
 }
 type ControllerResponse = Response & {
   messages: string[]
@@ -119,12 +119,9 @@ export class BaseController<TModel extends Model = never> {
 
   // Internal helpers
 
-  // This should have been loaded in the authorization middleware
-  // Currently assuming that authorization happens before this controller gets called.
-  // Child controllers that are on an non-authorizable route should override this method
-  // and return undefined
-  get currentUser(): User {
-    return this.request.currentUser
+  // _TODO_ figure out how this should get loaded
+  get currentPlayer(): Player {
+    return this.request.currentPlayer
   }
 
   get params() {

@@ -2,11 +2,12 @@ x-default-environment: &default-environment
   TZ: "UTC"
   NODE_ENV: development
   DB_HOST: db
-  DB_USERNAME: postgres
-  DB_DATABASE: vaultmc_development
+  DB_USERNAME: &default-db-user postgres
+  DB_DATABASE: &default-db-name vaultmc_development
   DB_PASSWORD: &default-db-password itsallgood
   DB_PORT: &default-db-port 5432
   DB_TRUST_SERVER_CERTIFICATE: "true" # not recommended for production
+  APPLICATION_NAME: "VaultMC"
   RELEASE_TAG: "${RELEASE_TAG:-development}"
   GIT_COMMIT_HASH: "${GIT_COMMIT_HASH:-not-set}"
 
@@ -19,7 +20,7 @@ services:
       - ./api/.env.development
     environment:
       <<: *default-environment
-    tty: true 
+    tty: true
     ports:
       - "3000:3000"
     volumes:
@@ -39,7 +40,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
 
 volumes:
   db_data:
