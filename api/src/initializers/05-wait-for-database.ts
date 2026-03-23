@@ -9,7 +9,7 @@ const dbConfig = buildKnexConfig() as Knex.Config & {
 }
 
 const INTERVAL_SECONDS = 5
-const TIMEOUT_SECONDS = 5
+const TIMEOUT_SECONDS = 3
 const RETRIES = 3
 const START_PERIOD_SECONDS = 10
 
@@ -34,7 +34,7 @@ export async function waitForDatabase({
   intervalSeconds = INTERVAL_SECONDS,
   timeoutSeconds = TIMEOUT_SECONDS,
   retries = RETRIES,
-  startPeriodSeconds = NODE_ENV === "test" ? 0 : START_PERIOD_SECONDS,
+  startPeriodSeconds = NODE_ENV === "test" || NODE_ENV === "development" ? 0 : START_PERIOD_SECONDS,
 }: {
   intervalSeconds?: number
   timeoutSeconds?: number

@@ -5,7 +5,7 @@ import logger from "@/utils/logger"
 
 import BaseController from "@/controllers/base-controller"
 import { PlayersPolicy } from "@/policies"
-import { CreateService } from "@/services/players"
+import { CreateService, UpdateService } from "@/services/players"
 
 export class PlayersController extends BaseController<Player> {
   async index() {
@@ -69,11 +69,37 @@ export class PlayersController extends BaseController<Player> {
       }
 
       const permittedAttributes = policy.permitAttributesForCreate(this.request.body)
-      const newPlayer = await CreateService.perform(permittedAttributes)
+      const { player: newPlayer } = await CreateService.perform(permittedAttributes)
       return this.response.status(201).json({ player: newPlayer })
     } catch (error) {
       logger.error(`Player creation failed: ${error}`, { error })
       return this.response.status(422).json({ message: "User creation failed" })
+    }
+  }
+
+  async update() {
+    try {
+      const player = await this.loadPlayer()
+
+      if (isNil(player)) {
+        return this.response.status(404).json({
+          message: `Player not found`,
+        })
+      }
+
+      const policy = this.buildPolicy(player)
+      if (!policy.update()) {
+        return this.response
+          .status(403)
+          .json({ message: "You are not authorized to update this player." })
+      }
+
+      const permittedAttributes = policy.permitAttributesForUpdate(this.request.body)
+      const updatedPlayer = await UpdateService.perform(player, permittedAttributes)
+      return this.response.status(200).json({ player: updatedPlayer })
+    } catch (error) {
+      logger.error(`Player update failed: ${error}`, { error })
+      return this.response.status(422).json({ message: "Player update failed" })
     }
   }
 

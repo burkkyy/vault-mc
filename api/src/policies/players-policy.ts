@@ -30,11 +30,11 @@ export class PlayersPolicy extends PolicyFactory(Player) {
   }
 
   permittedAttributes(): Path[] {
-    return []
+    return ["purseBalance"]
   }
 
   permittedAttributesForCreate(): Path[] {
-    return [...this.permittedAttributes(), "uuid"]
+    return [...this.permittedAttributes(), "uuid", "username"]
   }
 
   static policyScope(_player: Player): FindOptions<Attributes<Player>> {

@@ -7,6 +7,7 @@ x-default-environment: &default-environment
   DB_PASSWORD: &default-db-password itsallgood
   DB_PORT: &default-db-port 5432
   DB_TRUST_SERVER_CERTIFICATE: "true" # not recommended for production
+  # _TODO_ impl API_KEY ie API_KEY: "czgrFmRKq4Py4LZnV52tJ7czNMlyGYLH"
   APPLICATION_NAME: "VaultMC"
   RELEASE_TAG: "${RELEASE_TAG:-development}"
   GIT_COMMIT_HASH: "${GIT_COMMIT_HASH:-not-set}"

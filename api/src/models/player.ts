@@ -13,6 +13,14 @@ export class Player extends BaseModel<InferAttributes<Player>, InferCreationAttr
   @PrimaryKey
   declare uuid: string
 
+  @Attribute(DataTypes.STRING(16))
+  @NotNull
+  declare username: string
+
+  @Attribute(DataTypes.INTEGER)
+  @NotNull
+  declare purseBalance: CreationOptional<number>
+
   @Attribute(DataTypes.DATE(0))
   @NotNull
   declare createdAt: CreationOptional<Date>

@@ -5,7 +5,7 @@ import { GIT_COMMIT_HASH, RELEASE_TAG } from "@/config"
 import migrator from "@/db/migrator"
 
 import { bodyAuthorizationHoistMiddleware } from "@/middlewares"
-import { PlayersController } from "@/controllers"
+import { PlayersController, Players, AccountsController } from "@/controllers"
 import { logger } from "@/utils/logger"
 
 export const router = Router()
@@ -23,6 +23,9 @@ router.route("/_status").get((_req: Request, res: Response) => {
 router.use("/api", bodyAuthorizationHoistMiddleware)
 router.use("/migrate", migrator.migrationRouter)
 
+// Accounts
+router.route("/api/accounts").get(AccountsController.index).post(AccountsController.create)
+
 // Players
 router.route("/api/players").get(PlayersController.index).post(PlayersController.create)
 router
@@ -30,6 +33,13 @@ router
   .get(PlayersController.show)
   .patch(PlayersController.update)
   .delete(PlayersController.destroy)
+router.route("/api/players/:playerUuid/death").post(Players.DeathController.create)
+router.route("/api/players/:playerUuid/purse/burn").post(Players.Purse.BurnController.create)
+router.route("/api/players/:playerUuid/purse/deposit").post(Players.Purse.DepositController.create)
+router.route("/api/players/:playerUuid/purse/mint").post(Players.Purse.MintController.create)
+router
+  .route("/api/players/:playerUuid/purse/withdraw")
+  .post(Players.Purse.WithdrawController.create)
 
 // if no other routes match, return a 404
 router.use("/api", (_req: Request, res: Response) => {
